@@ -1,37 +1,39 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { StatusBar } from 'expo-status-bar';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import tw from '~/configs/theme/tw';
+import useDevice from '~/hooks/useDevice';
+import useTheme from '~/hooks/useTheme';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  useDevice();
+  const { isDark } = useTheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+    <>
+      <StatusBar
+        key={tw.memoBuster}
+        animated
+        translucent={true}
+        style={isDark ? 'light' : 'dark'}
+        backgroundColor='transparent'
+      />
+      <Stack
+        screenOptions={{
+          headerStyle: tw.style({
+            backgroundColor: isDark ? tw.color('bg-dark') : tw.color('bg-light')
+          }),
+          headerTintColor: isDark ? tw.color('text-button-dark') : tw.color('text-button-light'),
+          headerBackTitleVisible: false
+        }}
+      >
+        <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='home' options={{ headerTitle: 'Home' }} />
+        <Stack.Screen
+          name='welcome'
+          options={{ presentation: 'modal', animation: 'slide_from_bottom', headerShown: false }}
+        />
       </Stack>
-    </ThemeProvider>
+    </>
   );
 }

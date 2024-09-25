@@ -1,4 +1,4 @@
-node_modules/
+/node_modules
 .expo/
 dist/
 npm-debug.*
@@ -10,5 +10,11 @@ npm-debug.*
 *.orig.*
 web-build/
 
+# pre build
+/android
+/ios
+/vendor
+
 # macOS
 .DS_Store
+expo-env.d.ts
